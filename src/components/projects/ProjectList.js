@@ -1,5 +1,7 @@
 import React from "react";
 import {makeStyles, Paper, Typography} from "@material-ui/core";
+import ProjectSummary from "./ProjectSummary";
+import {Link} from "react-router-dom";
 
 const UseStyles = makeStyles(theme => ({
     root: {
@@ -8,8 +10,7 @@ const UseStyles = makeStyles(theme => ({
     },
 }));
 
-const ProjectList = () => {
-
+const ProjectList = ({projects}) => {
     const classes = UseStyles();
 
     return (
@@ -17,6 +18,9 @@ const ProjectList = () => {
             <Typography component="h2" variant="h5">
                 Projects List
             </Typography>
+            {projects && projects.map((project, i) => (
+                <Link key={project.id} to={`project/${project.id}`} ><ProjectSummary project={project} /></Link>
+            ))}
         </Paper>
     )
 };

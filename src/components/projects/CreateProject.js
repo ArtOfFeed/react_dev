@@ -4,6 +4,9 @@ import UseForm from "../hooks/UseFormHook";
 import Button from "@material-ui/core/Button";
 import {makeStyles, Typography} from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
+import {createProjectAC} from "../../store/actions/projectActions";
+import {connect} from "react-redux";
+import {Redirect} from "react-router-dom";
 
 const UseStyles = makeStyles(theme => ({
     button: {
@@ -15,15 +18,21 @@ const UseStyles = makeStyles(theme => ({
     },
 }));
 
-const createProject = () => {
+const createProject = (props) => {
+    console.log(props);
     const classes = UseStyles();
     const sign = () => {
-        alert(`Article Created!
-         Email: ${inputs.title}
-         Password: ${inputs.content}`);
+        let project = {};
+        project.email = inputs.title;
+        project.content = inputs.content;
+        console.log(project);
+
+        props.createProjectFn(project);
     };
 
     const {inputs, handleInputChange, handleSubmit} = UseForm(sign);
+
+    if (!props.auth.uid) return <Redirect to="/"/>;
 
     return <>
         <Paper className={classes.root}>
@@ -58,4 +67,16 @@ const createProject = () => {
     </>
 };
 
-export default createProject;
+const mapStateToProps = (state) => {
+    return {
+        auth: state.firebase.auth
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        createProjectFn: (project) => {dispatch(createProjectAC(project))}
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(createProject);

@@ -5,10 +5,12 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {makeStyles} from "@material-ui/core";
+import {makeStyles, Typography} from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import Slide from "@material-ui/core/Slide";
 import UseForm from "../hooks/UseFormHook";
+import {connect} from 'react-redux';
+import {SignInAC} from "../../store/actions/authActions";
 
 const useStyles = makeStyles(theme => ({
     link: {
@@ -26,7 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="right" ref={ref} {...props} />;
 });
 
-const SignIn = () => {
+const SignIn = (props) => {
 
     const [open, setOpen] = useState(false);
 
@@ -41,9 +43,12 @@ const SignIn = () => {
     };
 
     const sign = () => {
-        alert(`User Created!
-         Email: ${inputs.email}
-         Password: ${inputs.password}`);
+        let SignObj = {};
+        SignObj.email = inputs.email;
+        SignObj.password = inputs.password;
+
+        props.SignInFn(SignObj);
+
     };
 
     const {inputs, handleInputChange, handleSubmit} = UseForm(sign);
@@ -74,6 +79,7 @@ const SignIn = () => {
                                 />
                             )
                         )}
+                        {props.authError ? <Typography component="p" color="secondary">{props.authError}</Typography> : null}
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose} color="primary">Cancel</Button>
@@ -85,4 +91,16 @@ const SignIn = () => {
     );
 };
 
-export default SignIn;
+const mapStateToProps = (state) => {
+  return {
+      authError: state.auth.authError
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        SignInFn: (creads) => dispatch(SignInAC(creads))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

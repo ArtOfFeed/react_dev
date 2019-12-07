@@ -9,6 +9,8 @@ import {makeStyles} from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import Slide from "@material-ui/core/Slide";
 import UseForm from "../hooks/UseFormHook";
+import {connect} from 'react-redux';
+import {SignUpAC} from "../../store/actions/authActions";
 
 const useStyles = makeStyles(theme => ({
     link: {
@@ -26,7 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="right" ref={ref} {...props} />;
 });
 
-const SignUp = () => {
+const SignUp = (props) => {
 
     const [open, setOpen] = useState(false);
 
@@ -41,11 +43,14 @@ const SignUp = () => {
     };
 
     const sign = () => {
-        alert(`User Created!
-         Email: ${inputs.email}
-         Password: ${inputs.password}
-         first: ${inputs.first_name}
-         last: ${inputs.last_name}`);
+        let SignUpObj = {};
+
+        SignUpObj.email = inputs.email;
+        SignUpObj.password = inputs.password;
+        SignUpObj.firstName = inputs.first_name;
+        SignUpObj.lastName = inputs.last_name;
+        console.log(SignUpObj);
+        props.SignUpFn(SignUpObj);
     };
 
     const {inputs, handleInputChange, handleSubmit} = UseForm(sign);
@@ -89,4 +94,10 @@ const SignUp = () => {
     );
 };
 
-export default SignUp;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        SignUpFn: (user) => dispatch(SignUpAC(user))
+    }
+};
+
+export default connect(null, mapDispatchToProps)(SignUp);

@@ -8,6 +8,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import {Link} from "react-router-dom";
 import SingInLinks from "./SignInLinks";
 import SingOutLinks from "./SignOutLinks";
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -25,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const NavBar = () => {
+const NavBar = ({auth}) => {
     const classes = useStyles();
 
     return (
@@ -38,12 +39,17 @@ const NavBar = () => {
                     <Typography variant="h6" className={classes.title}>
                         <Link className={classes.navLink} to={'/'} >Logo here</Link>
                     </Typography>
-                    <SingOutLinks/>
-                    <SingInLinks/>
+                    {auth.isLoaded ? (auth.uid ? <SingInLinks/> : <SingOutLinks/>) : null}
                 </Toolbar>
             </AppBar>
         </div>
     );
 };
 
-export default NavBar;
+const mapStateToProps = (state) => {
+    return {
+        auth: state.firebase.auth
+    }
+};
+
+export default connect(mapStateToProps, null)(NavBar);
